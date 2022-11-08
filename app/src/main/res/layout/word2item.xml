@@ -8,9 +8,10 @@
     android:background="@drawable/shape">
 
     <ImageView
+        android:id="@+id/imgView"
         android:layout_width="200dp"
         android:layout_height="150dp"
-        android:src="@mipmap/noimg"
+        android:src="@drawable/noimg"
         android:layout_gravity="center"/>
 
     <TextView

@@ -29,7 +29,7 @@ public class word1Activity extends AppCompatActivity {
     word1Adapter adapter;
     ArrayList<word1VO> items;
     ArrayList<String[]> wordArr;
-    String[][] imgArr;
+    ArrayList<String[]> imgArr;
     Handler handler = new Handler();
 
     @Override
@@ -43,12 +43,16 @@ public class word1Activity extends AppCompatActivity {
         gridView = findViewById(R.id.gv);
         items = new ArrayList<>();
         wordArr = new ArrayList<>();
+        imgArr = new ArrayList<>();
+        /*final idVO idCode = (idVO) getApplication();
+        Log.v("test",String.valueOf(idCode.getId()));*/
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 Intent intent = new Intent(getApplicationContext(), word2Activity.class);
                 intent.putExtra("wordArr", wordArr.get(pos));
+                intent.putExtra("imgArr", imgArr.get(pos));
                 startActivity(intent);
 
             }
@@ -60,11 +64,13 @@ public class word1Activity extends AppCompatActivity {
             String host = "aszx1234.duckdns.org";
             int port = 6000;
             try{
+                final idVO idCode = (idVO) getApplication();
+
                 Socket socket = new Socket(host, port);
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                out.write("--1--0\n");
+                out.write("--1--"+String.valueOf(idCode.getId())+"\n");
                 out.flush();
                 String fract = in.readLine();
                 String[] fractR = fract.split("-");
@@ -80,7 +86,7 @@ public class word1Activity extends AppCompatActivity {
                         gridView.setAdapter(adapter);
                     }
                 });
-                out.write("--2--0\n");
+                out.write("--2--"+String.valueOf(idCode.getId())+"\n");
                 out.flush();
                 String word = in.readLine();
                 String[] wordR = word.split("@");
@@ -92,6 +98,30 @@ public class word1Activity extends AppCompatActivity {
                             String[] wordR2 = wordR[i].split("-");
                                 wordArr.add(wordR2);
                         }
+                    }
+                });
+                out.write("--3--"+String.valueOf(idCode.getId())+"\n");
+                out.flush();
+                String size = in.readLine();
+                out.write("--32--"+String.valueOf(idCode.getId())+"\n");
+                out.flush();
+                String img="";
+                while (true){
+                    img = img + in.readLine();
+                    if(img.length() >= Integer.parseInt(size)){
+                        break;
+                    }
+                }
+                String[] imgR = img.split("@");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        imgArr.clear();
+                        for(int i=0;i<imgR.length;i++) {
+                            String[] imgR2 = imgR[i].split("-");
+                            imgArr.add(imgR2);
+                        }
+                        //Log.v("test",imgArr.get(0)[0]);
                     }
                 });
                 socket.close();
