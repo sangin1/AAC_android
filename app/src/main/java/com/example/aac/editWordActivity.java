@@ -1,6 +1,7 @@
 package com.example.aac;
 
-import static java.lang.System.out;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,54 +9,50 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class word1Activity extends AppCompatActivity {
+public class editWordActivity extends AppCompatActivity {
     GridView gridView;
     word1Adapter adapter;
     ArrayList<word1VO> items;
+    String[] fractArr;
+    String[] fractCodeArr;
     ArrayList<String[]> wordArr;
-    ArrayList<String[]> imgArr;
     Handler handler = new Handler();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.word1);
-        ClientThread thread = new ClientThread();
+        setContentView(R.layout.edit_word_main);
+        editWordActivity.ClientThread thread = new editWordActivity.ClientThread();
         thread.start();
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+        wordArr = new ArrayList<>();
         gridView = findViewById(R.id.gv);
         items = new ArrayList<>();
-        wordArr = new ArrayList<>();
-        imgArr = new ArrayList<>();
         /*final idVO idCode = (idVO) getApplication();
         Log.v("test",String.valueOf(idCode.getId()));*/
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                Log.v("test",Integer.toString(pos));
-                Intent intent = new Intent(getApplicationContext(), word2Activity.class);
-                intent.putExtra("wordArr", wordArr.get(pos));
-                intent.putExtra("imgArr", imgArr.get(pos));
-                startActivity(intent);
-
+                if(pos==0){
+                    Intent intent = new Intent(getApplicationContext(), fractCUD.class);
+                    intent.putExtra("fractArr", fractArr);
+                    intent.putExtra("fractCodeArr", fractCodeArr);
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(getApplicationContext(), wordCUD.class);
+                    intent.putExtra("fractCode", fractCodeArr[pos-1]);
+                    intent.putExtra("wordArr", wordArr.get(pos));
+                    startActivity(intent);
+                }
             }
         });
 
@@ -71,7 +68,7 @@ public class word1Activity extends AppCompatActivity {
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                out.write("--1--"+idCode.getId()+"\n");
+                out.write("--upin--"+String.valueOf(idCode.getId())+"\n");
                 out.flush();
                 String fract = in.readLine();
                 String[] fractR = fract.split("-");
@@ -79,15 +76,33 @@ public class word1Activity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        fractArr = new String[fractR.length];
                         items = new ArrayList<>();
-                        for(int i=0;i<fractR.length;i++) {
-                            items.add(new word1VO(fractR[i]));
+                        items.add(new word1VO("분류 편집"));
+                        if(fractR[0].equals("0")){
+
+                        }else {
+                            for (int i = 0; i < fractR.length; i++) {
+                                items.add(new word1VO(fractR[i]));
+                                fractArr[i] = fractR[i];
+                            }
                         }
                         adapter = new word1Adapter(items, getApplicationContext());
                         gridView.setAdapter(adapter);
                     }
                 });
-                out.write("--2--"+String.valueOf(idCode.getId())+"\n");
+                String fractCode = in.readLine();
+                String[] fractCodeR = fractCode.split("-");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        fractCodeArr = new String[fractCodeR.length];
+                        for(int i=0;i<fractCodeR.length;i++) {
+                            fractCodeArr[i] = fractCodeR[i];
+                        }
+                    }
+                });
+                out.write("--upin2\n");
                 out.flush();
                 String word = in.readLine();
                 String[] wordR = word.split("@");
@@ -97,35 +112,10 @@ public class word1Activity extends AppCompatActivity {
                         wordArr.clear();
                         for(int i=0;i<wordR.length;i++) {
                             String[] wordR2 = wordR[i].split("-");
-                                wordArr.add(wordR2);
+                            wordArr.add(wordR2);
                         }
                     }
                 });
-                out.write("--3--"+String.valueOf(idCode.getId())+"\n");
-                out.flush();
-                String size = in.readLine();
-                out.write("--32--"+String.valueOf(idCode.getId())+"\n");
-                out.flush();
-                String img="";
-                while (true){
-                    img = img + in.readLine();
-                    if(img.length() >= Integer.parseInt(size)){
-                        break;
-                    }
-                }
-                String[] imgR = img.split("@");
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        imgArr.clear();
-                        for(int i=0;i<imgR.length;i++) {
-                            String[] imgR2 = imgR[i].split("-");
-                            imgArr.add(imgR2);
-                        }
-                        //Log.v("test",imgArr.get(0)[0]);
-                    }
-                });
-                socket.close();
 
             }catch(Exception e){
                 e.printStackTrace();
@@ -133,6 +123,4 @@ public class word1Activity extends AppCompatActivity {
 
         }
     }
-
 }
-

@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         btn4 = (Button) findViewById(R.id.btn4);
         final idVO idCode = (idVO) getApplication();
         checkid = idCode.getId();
-        Log.v("test","main"+checkid);
         if (checkid.equals("0")){
             btn3.setText("로그인");
             btn4.setVisibility(View.GONE);
@@ -68,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
                 if (checkid.equals("0")){
                     Intent intent = new Intent(getApplicationContext(), loginActivity.class);
                     startActivity(intent);
-                    finish();
                 }else {
                     idCode.setId("0");
                     checkid="0";
@@ -88,7 +86,9 @@ public class MainActivity extends AppCompatActivity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getApplicationContext(), editWordActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -99,10 +99,11 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayInputStream stream2 = new ByteArrayInputStream(byteArray);
         bitmap = BitmapFactory.decodeStream(stream2);
         ip.setImageBitmap(bitmap);
+
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.b);
         String image = "";
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
-        //image = Base64.getEncoder().encodeToString(byteArray);
+        image = Base64.getEncoder().encodeToString(byteArray);
         //Log.v("test",image);*/

@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.aac">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".idVO"
         android:allowBackup="true"
@@ -21,11 +24,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".word1Activity"></activity>
-        <activity android:name=".word2Activity"></activity>
-        <activity android:name=".loginActivity"></activity>
-        <activity android:name=".addidActivity"></activity>
+        <activity android:name=".word1Activity" />
+        <activity android:name=".word2Activity" />
+        <activity android:name=".loginActivity" />
+        <activity android:name=".addidActivity" />
+        <activity android:name=".editWordActivity" />
+        <activity android:name=".fractCUD" />
+        <activity android:name=".fractAddActivity" />
+        <activity android:name=".fractDelActivity" />
+        <activity android:name=".fractUpdateActivity" />
+        <activity android:name=".fractUpdateSelectActivity" />
+        <activity android:name=".wordCUD" />
+        <activity android:name=".wordAddActivity" />
+        <activity android:name=".wordDelActivity" />
+        <activity android:name=".wordUpdateActivity" />
+        <activity android:name=".wordUpdateSelectActivity" />
+        <activity android:name=".wordPicActivity" />
+        <activity android:name=".wordPicSelectActivity" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
 </manifest>

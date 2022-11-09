@@ -6,7 +6,7 @@
         android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:text="분류선택"
+        android:text="분류삭제"
         android:textSize="50dp"
         android:gravity="center"
         android:background="@color/back"
